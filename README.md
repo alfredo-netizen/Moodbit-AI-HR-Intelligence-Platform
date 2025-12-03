@@ -13,25 +13,37 @@
       --border-subtle: #e2e6f0;
       --accent: #2563eb;
       --accent-soft: rgba(37, 99, 235, 0.08);
+      --accent-strong: #4f46e5;
       --text-main: #0f172a;
       --text-muted: #64748b;
       --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.08);
+      --shadow-strong: 0 20px 60px rgba(37, 99, 235, 0.35);
       --radius-lg: 20px;
       --radius-xl: 32px;
       --radius-pill: 999px;
       --gradient-accent: linear-gradient(135deg, #2563eb, #4f46e5);
+      --gradient-soft: radial-gradient(circle at top left, #e0edff 0, #f5f7fb 40%, #ffffff 100%);
     }
 
     * {
       box-sizing: border-box;
     }
 
-    body {
+    html, body {
       margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      scroll-behavior: smooth;
+    }
+
+    body {
       font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top left, #e0edff 0, #f5f7fb 40%, #ffffff 100%);
+      background: var(--gradient-soft);
       color: var(--text-main);
       line-height: 1.6;
+      position: relative;
+      overflow-x: hidden;
     }
 
     a {
@@ -43,11 +55,35 @@
       text-decoration: underline;
     }
 
+    /* ==== Cinematic animated background ==== */
+
+    .bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+    }
+
+    .bg-overlay {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at top left, rgba(59, 130, 246, 0.16), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(79, 70, 229, 0.18), transparent 60%);
+      mix-blend-mode: screen;
+      opacity: 0.9;
+      pointer-events: none;
+      z-index: -1;
+    }
+
     .page {
       max-width: 1120px;
       margin: 0 auto;
       padding: 32px 20px 60px;
+      position: relative;
+      z-index: 1;
     }
+
+    /* ==== Header ==== */
 
     header {
       display: flex;
@@ -64,11 +100,12 @@
     }
 
     .logo-icon {
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       border-radius: 18px;
-      background: radial-gradient(circle at 30% 20%, #60a5fa, #2563eb);
-      box-shadow: 0 12px 30px rgba(37, 99, 235, 0.55);
+      background:
+        radial-gradient(circle at 30% 20%, #60a5fa, #2563eb);
+      box-shadow: 0 14px 35px rgba(37, 99, 235, 0.7);
       position: relative;
       overflow: hidden;
     }
@@ -78,7 +115,8 @@
       content: "";
       position: absolute;
       border-radius: 999px;
-      border: 2px solid rgba(255, 255, 255, 0.85);
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
     }
 
     .logo-icon::before {
@@ -125,14 +163,28 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.03);
     }
 
     .chip--accent {
       border-color: transparent;
       background: var(--gradient-accent);
       color: white;
-      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
+      box-shadow: var(--shadow-strong);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .chip--accent::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.55) 35%, transparent 70%);
+      opacity: 0;
+      transform: translateX(-40%);
+      pointer-events: none;
+      animation: chipShine 4s ease-in-out infinite;
     }
 
     .chip-dot {
@@ -140,23 +192,49 @@
       height: 7px;
       background: #22c55e;
       border-radius: 999px;
+      box-shadow: 0 0 6px rgba(34, 197, 94, 0.9);
     }
 
+    @keyframes chipShine {
+      0%, 60% {
+        opacity: 0;
+        transform: translateX(-40%);
+      }
+      75% {
+        opacity: 1;
+        transform: translateX(60%);
+      }
+      100% {
+        opacity: 0;
+        transform: translateX(80%);
+      }
+    }
+
+    /* ==== Hero ==== */
+
     .hero {
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.98);
       border-radius: var(--radius-xl);
       box-shadow: var(--shadow-soft);
       padding: 32px 28px;
       margin-bottom: 32px;
       position: relative;
       overflow: hidden;
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      backdrop-filter: blur(6px);
     }
 
     .hero::before {
       content: "";
       position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.1), transparent 55%);
+      inset: -1px;
+      border-radius: inherit;
+      padding: 1px;
+      background: conic-gradient(from 160deg, rgba(37, 99, 235, 0.2), transparent 25%, rgba(94, 234, 212, 0.24), transparent 60%, rgba(129, 140, 248, 0.4));
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+              mask-composite: exclude;
+      opacity: 0.7;
       pointer-events: none;
     }
 
@@ -176,9 +254,13 @@
       padding: 4px 10px;
       border-radius: var(--radius-pill);
       background: rgba(15, 23, 42, 0.03);
-      border: 1px solid rgba(148, 163, 184, 0.4);
+      border: 1px solid rgba(148, 163, 184, 0.5);
       margin-bottom: 12px;
       color: var(--text-muted);
+    }
+
+    .hero-eyebrow .chip-dot {
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.8);
     }
 
     .hero-title {
@@ -223,6 +305,7 @@
       border-radius: 999px;
       background: #38bdf8;
       flex-shrink: 0;
+      box-shadow: 0 0 8px rgba(56, 189, 248, 0.9);
     }
 
     .hero-cta-row {
@@ -241,11 +324,44 @@
       font-weight: 500;
       border: none;
       cursor: pointer;
-      box-shadow: 0 18px 45px rgba(37, 99, 235, 0.4);
+      box-shadow: var(--shadow-strong);
+      position: relative;
+      overflow: hidden;
+      transform: translateY(0);
+      transition: transform 0.18s ease-out, box-shadow 0.18s ease-out;
+    }
+
+    .hero-cta-primary::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.55) 35%, transparent 70%);
+      opacity: 0;
+      transform: translateX(-40%);
+      pointer-events: none;
     }
 
     .hero-cta-primary:hover {
-      opacity: 0.94;
+      transform: translateY(-2px);
+      box-shadow: 0 20px 55px rgba(37, 99, 235, 0.55);
+    }
+
+    .hero-cta-primary:hover::after {
+      animation: buttonShine 0.8s ease-out forwards;
+    }
+
+    @keyframes buttonShine {
+      0% {
+        opacity: 0;
+        transform: translateX(-40%);
+      }
+      40% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: translateX(60%);
+      }
     }
 
     .hero-cta-meta {
@@ -257,13 +373,32 @@
       color: var(--text-main);
     }
 
+    /* ==== Architecture card ==== */
+
     .hero-architecture {
       background: rgba(15, 23, 42, 0.02);
       border-radius: 22px;
       padding: 18px 18px 14px;
-      border: 1px solid var(--border-subtle);
+      border: 1px solid rgba(148, 163, 184, 0.6);
       position: relative;
       overflow: hidden;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+    }
+
+    .hero-architecture::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 20% 0, rgba(125, 211, 252, 0.35), transparent 70%),
+        radial-gradient(circle at 100% 100%, rgba(129, 140, 248, 0.35), transparent 70%);
+      opacity: 0.65;
+      pointer-events: none;
+    }
+
+    .hero-architecture-inner {
+      position: relative;
+      z-index: 1;
     }
 
     .hero-architecture-header {
@@ -288,8 +423,9 @@
       font-size: 0.68rem;
       padding: 3px 8px;
       border-radius: var(--radius-pill);
-      background: rgba(148, 163, 184, 0.12);
-      color: #0f172a;
+      background: rgba(15, 23, 42, 0.8);
+      color: #e5e7eb;
+      box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.5);
     }
 
     .cloud-graph {
@@ -300,14 +436,25 @@
     }
 
     .cloud-node {
-      background: #ffffff;
+      background: rgba(255, 255, 255, 0.95);
       border-radius: 14px;
       padding: 8px 9px;
-      border: 1px solid rgba(148, 163, 184, 0.45);
+      border: 1px solid rgba(148, 163, 184, 0.7);
       display: flex;
       flex-direction: column;
       gap: 3px;
       position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+    }
+
+    .cloud-node::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.09), transparent 40%);
+      mix-blend-mode: soft-light;
+      pointer-events: none;
     }
 
     .cloud-node-label {
@@ -340,15 +487,19 @@
       height: 6px;
       border-radius: 999px;
       background: #60a5fa;
+      box-shadow: 0 0 6px rgba(96, 165, 250, 0.9);
     }
+
+    /* ==== Sections & cards ==== */
 
     .section {
       margin-bottom: 26px;
-      background: var(--bg-card);
+      background: rgba(255, 255, 255, 0.97);
       border-radius: var(--radius-lg);
       padding: 20px 22px;
       border: 1px solid var(--border-subtle);
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+      backdrop-filter: blur(4px);
     }
 
     .section-header {
@@ -404,9 +555,36 @@
       border-radius: 16px;
       padding: 10px 12px;
       background: #f8fafc;
-      border: 1px solid rgba(148, 163, 184, 0.45);
+      border: 1px solid rgba(148, 163, 184, 0.6);
       font-size: 0.84rem;
       color: var(--text-muted);
+      box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
+      position: relative;
+      overflow: hidden;
+      transition:
+        transform 0.2s ease-out,
+        box-shadow 0.2s ease-out,
+        border-color 0.2s ease-out;
+    }
+
+    .section-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top left, rgba(59, 130, 246, 0.12), transparent 55%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease-out;
+    }
+
+    .section-card:hover {
+      transform: translateY(-4px) translateZ(0);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.16);
+      border-color: rgba(59, 130, 246, 0.7);
+    }
+
+    .section-card:hover::after {
+      opacity: 1;
     }
 
     .section-card h4 {
@@ -428,7 +606,7 @@
       padding: 4px 9px;
       border-radius: var(--radius-pill);
       background: #f1f5f9;
-      border: 1px solid rgba(148, 163, 184, 0.5);
+      border: 1px solid rgba(148, 163, 184, 0.6);
     }
 
     footer {
@@ -442,6 +620,35 @@
       color: var(--accent);
       font-weight: 500;
     }
+
+    /* ==== Scroll reveal animations ==== */
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition:
+        opacity 0.65s cubic-bezier(0.19, 1, 0.22, 1),
+        transform 0.65s cubic-bezier(0.19, 1, 0.22, 1);
+      will-change: opacity, transform;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Slight delay variants */
+    .reveal.delay-1 {
+      transition-delay: 0.08s;
+    }
+    .reveal.delay-2 {
+      transition-delay: 0.16s;
+    }
+    .reveal.delay-3 {
+      transition-delay: 0.24s;
+    }
+
+    /* ==== Responsive ==== */
 
     @media (max-width: 880px) {
       .hero-grid {
@@ -474,8 +681,12 @@
   </style>
 </head>
 <body>
+  <!-- animated background -->
+  <canvas class="bg-canvas" id="bg-canvas"></canvas>
+  <div class="bg-overlay"></div>
+
   <div class="page">
-    <header>
+    <header class="reveal visible">
       <div class="logo-mark">
         <div class="logo-icon"></div>
         <div>
@@ -496,7 +707,7 @@
 
     <main>
       <!-- HERO -->
-      <section class="hero">
+      <section class="hero reveal">
         <div class="hero-grid">
           <div>
             <div class="hero-eyebrow">
@@ -536,44 +747,46 @@
           </div>
 
           <!-- ARCHITECTURE SUMMARY -->
-          <aside class="hero-architecture">
-            <div class="hero-architecture-header">
-              <div class="hero-architecture-title">Google Cloud Solution Architecture</div>
-              <div class="hero-architecture-badges">
-                <span>Vertex AI</span>
-                <span>BigQuery</span>
-                <span>Cloud Run</span>
-              </div>
-            </div>
-            <div class="cloud-graph">
-              <div class="cloud-node">
-                <div class="cloud-node-label">HR Data Layer</div>
-                <div class="cloud-node-desc">
-                  HRIS, payroll, engagement platforms and document repositories are connected through secure APIs and batch pipelines into Google Cloud Storage and BigQuery.
-                </div>
-                <div class="cloud-node-pill">
-                  <span class="cloud-node-pill-dot"></span>
-                  DATA INGESTION
+          <aside class="hero-architecture reveal delay-1">
+            <div class="hero-architecture-inner">
+              <div class="hero-architecture-header">
+                <div class="hero-architecture-title">Google Cloud Solution Architecture</div>
+                <div class="hero-architecture-badges">
+                  <span>Vertex AI</span>
+                  <span>BigQuery</span>
+                  <span>Cloud Run</span>
                 </div>
               </div>
-              <div class="cloud-node">
-                <div class="cloud-node-label">AI &amp; Search Layer</div>
-                <div class="cloud-node-desc">
-                  Vertex AI hosts LLMs and embeddings for Moodbit’s GenAI agents and Cognitive Search, providing semantic understanding over structured and unstructured HR data.
+              <div class="cloud-graph">
+                <div class="cloud-node">
+                  <div class="cloud-node-label">HR Data Layer</div>
+                  <div class="cloud-node-desc">
+                    HRIS, payroll, engagement platforms and document repositories are connected through secure APIs and batch pipelines into Google Cloud Storage and BigQuery.
+                  </div>
+                  <div class="cloud-node-pill">
+                    <span class="cloud-node-pill-dot"></span>
+                    DATA INGESTION
+                  </div>
                 </div>
-                <div class="cloud-node-pill">
-                  <span class="cloud-node-pill-dot"></span>
-                  INTELLIGENCE
+                <div class="cloud-node">
+                  <div class="cloud-node-label">AI &amp; Search Layer</div>
+                  <div class="cloud-node-desc">
+                    Vertex AI hosts LLMs and embeddings for Moodbit’s GenAI agents and Cognitive Search, providing semantic understanding over structured and unstructured HR data.
+                  </div>
+                  <div class="cloud-node-pill">
+                    <span class="cloud-node-pill-dot"></span>
+                    INTELLIGENCE
+                  </div>
                 </div>
-              </div>
-              <div class="cloud-node">
-                <div class="cloud-node-label">Experience Layer</div>
-                <div class="cloud-node-desc">
-                  Employee and HR portals run on Cloud Run and Cloud Load Balancing, exposing secure APIs, chat interfaces and dashboards for self-service insights and actions.
-                </div>
-                <div class="cloud-node-pill">
-                  <span class="cloud-node-pill-dot"></span>
-                  EXPERIENCE
+                <div class="cloud-node">
+                  <div class="cloud-node-label">Experience Layer</div>
+                  <div class="cloud-node-desc">
+                    Employee and HR portals run on Cloud Run and Cloud Load Balancing, exposing secure APIs, chat interfaces and dashboards for self-service insights and actions.
+                  </div>
+                  <div class="cloud-node-pill">
+                    <span class="cloud-node-pill-dot"></span>
+                    EXPERIENCE
+                  </div>
                 </div>
               </div>
             </div>
@@ -582,7 +795,7 @@
       </section>
 
       <!-- SECTION: OVERVIEW -->
-      <section class="section">
+      <section class="section reveal">
         <div class="section-header">
           <h2 class="section-title">
             Solution overview
@@ -606,7 +819,7 @@
       </section>
 
       <!-- SECTION: GOOGLE CLOUD INTEGRATION -->
-      <section class="section">
+      <section class="section reveal delay-1">
         <div class="section-header">
           <h2 class="section-title">
             Deep integration with Google Cloud
@@ -640,7 +853,7 @@
       </section>
 
       <!-- SECTION: USE CASES & VALUE -->
-      <section class="section">
+      <section class="section reveal delay-2">
         <div class="section-header">
           <h2 class="section-title">
             Key HR use cases &amp; business value
@@ -670,7 +883,7 @@
       </section>
 
       <!-- SECTION: SECURITY & COMPLIANCE -->
-      <section class="section">
+      <section class="section reveal delay-3">
         <div class="section-header">
           <h2 class="section-title">
             Security, privacy &amp; compliance
@@ -689,11 +902,107 @@
       </section>
     </main>
 
-    <footer>
+    <footer class="reveal">
       Moodbit · AI HR Intelligence on Google Cloud ·
       <a href="https://mymoodbit.cc" target="_blank" rel="noopener">mymoodbit.cc</a> ·
       Contact: <a href="mailto:alfredo@mymoodbit.cc">alfredo@mymoodbit.cc</a>
     </footer>
   </div>
+
+  <!-- === JS: cinematic background + scroll reveal === -->
+  <script>
+    // Animated network background
+    (function () {
+      const canvas = document.getElementById("bg-canvas");
+      const ctx = canvas.getContext("2d");
+      let width, height, points;
+
+      function resize() {
+        width = canvas.width = window.innerWidth * window.devicePixelRatio;
+        height = canvas.height = window.innerHeight * window.devicePixelRatio;
+      }
+
+      function createPoints() {
+        const count = Math.min(80, Math.floor(width / 40));
+        points = [];
+        for (let i = 0; i < count; i++) {
+          points.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            vx: (Math.random() - 0.5) * 0.25 * window.devicePixelRatio,
+            vy: (Math.random() - 0.5) * 0.25 * window.devicePixelRatio,
+          });
+        }
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, width, height);
+        ctx.fillStyle = "rgba(248, 250, 252, 0.9)";
+        ctx.fillRect(0, 0, width, height);
+
+        for (let i = 0; i < points.length; i++) {
+          const p = points[i];
+          p.x += p.vx;
+          p.y += p.vy;
+
+          if (p.x < 0 || p.x > width) p.vx *= -1;
+          if (p.y < 0 || p.y > height) p.vy *= -1;
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 2.0 * window.devicePixelRatio, 0, Math.PI * 2);
+          ctx.fillStyle = "rgba(129, 140, 248, 0.45)";
+          ctx.fill();
+        }
+
+        const maxDist = 160 * window.devicePixelRatio;
+        for (let i = 0; i < points.length; i++) {
+          for (let j = i + 1; j < points.length; j++) {
+            const p1 = points[i];
+            const p2 = points[j];
+            const dx = p1.x - p2.x;
+            const dy = p1.y - p2.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < maxDist) {
+              const alpha = 1 - dist / maxDist;
+              ctx.strokeStyle = "rgba(37, 99, 235," + (0.08 * alpha) + ")";
+              ctx.lineWidth = 1 * window.devicePixelRatio;
+              ctx.beginPath();
+              ctx.moveTo(p1.x, p1.y);
+              ctx.lineTo(p2.x, p2.y);
+              ctx.stroke();
+            }
+          }
+        }
+
+        requestAnimationFrame(draw);
+      }
+
+      resize();
+      createPoints();
+      draw();
+      window.addEventListener("resize", function () {
+        resize();
+        createPoints();
+      });
+    })();
+
+    // Scroll reveal
+    (function () {
+      const elements = document.querySelectorAll(".reveal");
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.12 }
+      );
+
+      elements.forEach((el) => observer.observe(el));
+    })();
+  </script>
 </body>
 </html>
